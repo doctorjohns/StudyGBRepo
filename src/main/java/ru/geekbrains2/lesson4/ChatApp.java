@@ -11,7 +11,7 @@ public class ChatApp extends JFrame {
 
 
         JTextArea chatText = new JTextArea();
-        chatText.setEnabled(false);
+        chatText.setEditable(false);
 
         JScrollPane scrollPane = new JScrollPane(chatText);
         add(scrollPane, BorderLayout.CENTER);
