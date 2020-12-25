@@ -3,6 +3,7 @@ package ru.geekbrains2.lesson8;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,11 @@ class Server {
             while (true) {
                 Socket socket = serverSocket.accept();
                 new Thread(() -> {
-                    new ClientHandler(authService, this, socket);
+                    try {
+                        new ClientHandler(authService, this, socket);
+                    } catch (SocketException e) {
+                        e.printStackTrace();
+                    }
                 }).start();
             }
         } catch (IOException e) {

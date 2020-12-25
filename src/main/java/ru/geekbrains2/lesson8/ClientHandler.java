@@ -4,7 +4,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Timer;
+import java.util.TimerTask;
+
+import static java.lang.System.*;
 
 class ClientHandler {
     AuthService authService;
@@ -14,10 +18,12 @@ class ClientHandler {
     DataInputStream dataInputStream;
     Client client;
 
-    ClientHandler(AuthService authService, Server server, Socket socket) {
+
+    ClientHandler(AuthService authService, Server server, Socket socket) throws SocketException {
         this.authService = authService;
         this.server = server;
         this.socket = socket;
+
         try {
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
             dataInputStream = new DataInputStream(socket.getInputStream());
@@ -57,6 +63,8 @@ class ClientHandler {
         // Цикл ожидания авторизации клиентов
         int tryCount = 0;
         int maxTryCount = 5;
+        long startTime = System.currentTimeMillis();
+        out.println(startTime);
         while (true) {
             // Читаем комманду от клиента
             String newMessage = dataInputStream.readUTF();
@@ -72,7 +80,7 @@ class ClientHandler {
                 if (client != null) {
                     // Если получилось авторизоваться то выходим из цикла
                     dataOutputStream.writeUTF("/auth ok");
-                    System.out.println("Login success");
+                    out.println("Login success");
                     break;
                 } else {
                     dataOutputStream.writeUTF("Неправильные логин и пароль!");
@@ -111,5 +119,8 @@ class ClientHandler {
                 server.sendBroadCastMessage(client, newMessage);
             }
         }
+    }
+    private void userKick() throws IOException {
+
     }
 }
